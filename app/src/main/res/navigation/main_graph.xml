@@ -9,7 +9,7 @@
         android:name="com.example.dogchallenge.ui.fragments.BreedListFragment"
         android:label="BreedListFragment" >
         <action
-            android:id="@+id/action_breedListFragment_to_breedDetailsFragment"
+            android:id="@+id/breedDetails"
             app:destination="@id/breedDetailsFragment" />
     </fragment>
     <fragment

@@ -2,7 +2,8 @@ package com.example.dogchallenge.di
 
 import android.content.Context
 import com.example.dogchallenge.R
-import com.example.dogchallenge.api.NetworkInterceptor
+import com.example.dogchallenge.api.interceptors.HeaderInterceptor
+import com.example.dogchallenge.api.interceptors.NetworkInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.BuildConfig.DEBUG
@@ -28,6 +29,7 @@ val networkModule = module {
             okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
         }
         okHttpClientBuilder.addInterceptor(NetworkInterceptor(context))
+        okHttpClientBuilder.addInterceptor(HeaderInterceptor())
         okHttpClientBuilder.build()
         return okHttpClientBuilder.build()
     }

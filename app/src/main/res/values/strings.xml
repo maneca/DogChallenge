@@ -8,5 +8,8 @@
     <string name="dismiss_button">OK</string>
     <string name="nothing_to_show">There is nothing to show</string>
     <string name="no_more_data">There is no more data to retrieve</string>
-    <string name="no_name">N/A</string>
+    <string name="breed_name">Name</string>
+    <string name="breed_group">Group</string>
+    <string name="breed_origin">Origin</string>
+    <string name="breed_details">Breed details</string>
 </resources>

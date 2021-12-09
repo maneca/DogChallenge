@@ -1,4 +1,4 @@
-package com.example.dogchallenge.api
+package com.example.dogchallenge.api.interceptors
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -21,7 +21,7 @@ class NetworkInterceptor(context: Context?) : Interceptor {
         return chain.proceed(builder.build())
     }
 
-    fun isOnline(context: Context?): Boolean {
+    private fun isOnline(context: Context?): Boolean {
         var result = false
         val connectivityManager =
             context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
