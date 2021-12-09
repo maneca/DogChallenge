@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">DogChallenge</string>
+    <string name="BASE_URL">https://api.thedogapi.com/v1/</string>
+    <string name="no_network_connectivity">You are not connected to a network</string>
+    <string name="api_not_responding">The API is not responding</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="error_title">Error</string>
+    <string name="dismiss_button">OK</string>
+    <string name="nothing_to_show">There is nothing to show</string>
+    <string name="no_more_data">There is no more data to retrieve</string>
+    <string name="no_name">N/A</string>
 </resources>

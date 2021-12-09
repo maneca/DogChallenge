@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/breedListFragment"
-        android:name="com.example.dogchallenge.ui.BreedListFragment"
+        android:name="com.example.dogchallenge.ui.fragments.BreedListFragment"
         android:label="BreedListFragment" >
         <action
             android:id="@+id/action_breedListFragment_to_breedDetailsFragment"
@@ -14,6 +14,6 @@
     </fragment>
     <fragment
         android:id="@+id/breedDetailsFragment"
-        android:name="com.example.dogchallenge.ui.BreedDetailsFragment"
+        android:name="com.example.dogchallenge.ui.fragments.BreedDetailsFragment"
         android:label="BreedDetailsFragment" />
 </navigation>

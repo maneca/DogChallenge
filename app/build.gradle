@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -57,11 +59,84 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.activity:activity-compose:1.4.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+    // Unit tests
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'com.google.truth:truth:1.0.1'
+    androidTestImplementation 'com.google.truth:truth:1.0.1'
+    //For runBlockingTest, CoroutineDispatcher etc.
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0"
+    //For InstantTaskExecutorRule
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+
+    testImplementation 'org.robolectric:robolectric:4.6'
+
+    // Mockk
+    testImplementation "io.mockk:mockk:1.12.1"
+    testImplementation "io.mockk:mockk-agent-jvm:1.12.1"
+    androidTestImplementation "io.mockk:mockk-android:1.12.1"
+    testImplementation "io.mockk:mockk-common:1.12.1"
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:1.3.2")
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
+
+    //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+
+    // Koin for the dependencies injections
+    implementation 'org.koin:koin-android:2.0.0-rc-2'
+    implementation 'org.koin:koin-android-viewmodel:2.0.0-rc-2'
+    implementation 'org.koin:koin-androidx-scope:2.0.0-rc-2'
+    androidTestImplementation "org.koin:koin-test:2.1.6"
+
+    // for room
+    implementation 'androidx.room:room-runtime:2.3.0'
+    annotationProcessor 'androidx.room:room-compiler:2.3.0'
+    kapt 'androidx.room:room-compiler:2.3.0'
+
+    // Coroutines for asynchronous calls (and Deferred’s adapter)
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    configurations {
+        compile.exclude group: 'org.jetbrains.kotlinx', module: 'atomicfu-common'
+    }
+
+    // Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
+
+    // lifecycle
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+
+    //recyclerview and cardview
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    // Compose Material Design
+    implementation 'androidx.compose.material:material:1.0.5'
+    // Animations
+    implementation 'androidx.compose.animation:animation:1.0.5'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.0.5'
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0'
 }
