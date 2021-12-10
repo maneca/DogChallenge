@@ -6,7 +6,7 @@ import com.example.dogchallenge.utils.AppResult
 
 interface DogRepository {
 
-    suspend fun getDogBreeds(limit: Int, page: Int): AppResult<BreedsInfo>?
+    suspend fun getDogBreeds(limit: Int, page: Int, order: String): AppResult<BreedsInfo>?
 
     suspend fun searchDogBreeds(query: String): AppResult<List<Breed>>?
 }

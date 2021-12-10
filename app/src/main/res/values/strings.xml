@@ -11,5 +11,8 @@
     <string name="breed_name">Name</string>
     <string name="breed_group">Group</string>
     <string name="breed_origin">Origin</string>
+    <string name="breed_list">Breed List</string>
     <string name="breed_details">Breed details</string>
+    <string name="breed_category">Category</string>
+    <string name="breed_temperament">Temperament</string>
 </resources>

@@ -35,6 +35,9 @@ class BreedListViewModel(
     var showWarning by mutableStateOf<Int?>(null)
         private set
 
+    var ascendingOrder by mutableStateOf(true)
+        private set
+
     var page by mutableStateOf(1)
         private set
 
@@ -44,17 +47,28 @@ class BreedListViewModel(
         getBreeds(0)
     }
 
-    private fun getBreeds(pageToLoad: Int) {
+    fun getBreeds(pageToLoad: Int, resetList: Boolean = false) {
         showLoading = true
         viewModelScope.launch {
+            val order = if (ascendingOrder) "asc" else "desc"
             val result =
-                withContext(Dispatchers.IO) { repository.getDogBreeds(PAGE_SIZE, pageToLoad) }
+                withContext(Dispatchers.IO) {
+                    repository.getDogBreeds(
+                        PAGE_SIZE,
+                        pageToLoad,
+                        order
+                    )
+                }
 
             showLoading = false
             when (result) {
                 is AppResult.Success -> {
                     totalItems = result.successData.totalItems
-                    appendBreeds(result.successData.breeds)
+                    if (resetList) {
+                        breedList = result.successData.breeds
+                        page = 1
+                    } else
+                        appendBreeds(result.successData.breeds)
 
                     showError = null
                 }
@@ -71,6 +85,10 @@ class BreedListViewModel(
                 else -> showError = R.string.something_went_wrong
             }
         }
+    }
+
+    fun changeSortingOrder() {
+        ascendingOrder = !ascendingOrder
     }
 
     fun nextPage() {

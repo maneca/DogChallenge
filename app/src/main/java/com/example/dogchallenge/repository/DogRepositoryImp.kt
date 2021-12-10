@@ -8,9 +8,13 @@ import com.example.dogchallenge.utils.*
 
 class DogRepositoryImp(private val api: DogApi) : DogRepository {
 
-    override suspend fun getDogBreeds(limit: Int, page: Int): AppResult<BreedsInfo>? {
+    override suspend fun getDogBreeds(
+        limit: Int,
+        page: Int,
+        order: String
+    ): AppResult<BreedsInfo>? {
         return try {
-            val response = api.getBreeds(limit, page)
+            val response = api.getBreeds(limit, page, order)
 
             if (response.isSuccessful) {
                 response.body()?.let {

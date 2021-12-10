@@ -11,21 +11,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,13 +32,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -57,8 +49,10 @@ import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.ui.models.BreedUI
 import com.example.dogchallenge.ui.widgets.ErrorDialog
 import com.example.dogchallenge.ui.widgets.LoadingView
+import com.example.dogchallenge.ui.widgets.TextDetailWidget
 import com.example.dogchallenge.viewmodels.BreedListViewModel
 import com.example.dogchallenge.viewmodels.PAGE_SIZE
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 
 @ExperimentalComposeUiApi
@@ -66,9 +60,9 @@ import org.koin.android.viewmodel.ext.android.viewModel
 @ExperimentalCoilApi
 class BreedListFragment : Fragment() {
     private val breedListViewModel by viewModel<BreedListViewModel>()
-    private lateinit var displayList: MutableState<Boolean>
     private lateinit var breedList: List<Breed>
     private lateinit var filteredBreedList: List<Breed>
+    private var ascendingOrder: Boolean = true
     private var page: Int = 0
     private var loading: Boolean = false
 
@@ -80,7 +74,9 @@ class BreedListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val selectedTab = remember { mutableStateOf(0) }
-                displayList = remember { mutableStateOf(true) }
+                val displayList = remember { mutableStateOf(true) }
+                val listState = rememberLazyListState()
+                ascendingOrder = breedListViewModel.ascendingOrder
                 breedList = breedListViewModel.breedList
                 filteredBreedList = breedListViewModel.filteredBreedList
                 loading = breedListViewModel.showLoading
@@ -89,24 +85,6 @@ class BreedListFragment : Fragment() {
                 page = breedListViewModel.page
 
                 Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text(text = stringResource(R.string.app_name)) },
-                            actions = {
-                                IconButton(onClick = {
-                                    displayList.value = !displayList.value
-                                }) {
-                                    Icon(
-                                        if (displayList.value) Icons.Filled.List else Icons.Filled.ShoppingCart,
-                                        contentDescription = ""
-                                    )
-                                }
-                                IconButton(onClick = { /* doSomething() */ }) {
-                                    Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "")
-                                }
-                            }
-                        )
-                    },
                     bottomBar = {
                         AppBottomBar(selectedTab)
                     }) {
@@ -140,7 +118,7 @@ class BreedListFragment : Fragment() {
                         }
                     } else {
                         if (selectedTab.value == 0) {
-                            BreedList(breedList)
+                            BreedListScreen(breedList, displayList, ascendingOrder, listState)
                         } else {
                             SearchScreen()
                         }
@@ -151,35 +129,87 @@ class BreedListFragment : Fragment() {
         }
     }
 
-    @ExperimentalFoundationApi
     @Composable
-    fun BreedList(breeds: List<Breed>) {
+    fun BreedListScreen(
+        breeds: List<Breed>,
+        displayList: MutableState<Boolean>,
+        ascendingOrder: Boolean,
+        state: LazyListState
+    ) {
+        val coroutineScope = rememberCoroutineScope()
 
-        if (!displayList.value) {
-            LazyVerticalGrid(cells = GridCells.Fixed(2)) {
-                itemsIndexed(items = breeds) { index, breed ->
-
-                    if (index > 0 && page > 0 && index >= ((page * PAGE_SIZE) - 1) && !loading) {
-                        breedListViewModel.nextPage()
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                color = MaterialTheme.colors.primary,
+                elevation = 8.dp,
+            ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        stringResource(id = R.string.breed_list),
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .weight(0.7f)
+                            .align(CenterVertically)
+                    )
+                    IconButton(modifier = Modifier.weight(0.15f),
+                        onClick = {
+                            displayList.value = !displayList.value
+                        }) {
+                        Icon(
+                            painter = painterResource(id = if (displayList.value) R.drawable.icon_list else R.drawable.icon_grid),
+                            contentDescription = ""
+                        )
                     }
-                    Breed(breed)
+                    IconButton(
+                        modifier = Modifier.weight(0.15f),
+                        onClick = {
+                            breedListViewModel.changeSortingOrder()
+                            breedListViewModel.getBreeds(0, true)
+                            coroutineScope.launch {
+                                state.animateScrollToItem(0)
+                            }
+                        }) {
+                        Icon(
+                            painter = painterResource(id = if (ascendingOrder) R.drawable.icon_ascending else R.drawable.icon_descending),
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-            ) {
-                itemsIndexed(items = breeds) { index, breed ->
-
-                    if (index > 0 && page > 0 && index >= ((page * PAGE_SIZE) - 1) && !loading) {
-                        breedListViewModel.nextPage()
+            if (!displayList.value) {
+                LazyVerticalGrid(cells = GridCells.Fixed(2)) {
+                    itemsIndexed(items = breeds) { index, breed ->
+                        DisplayBreed(index = index, breed = breed)
                     }
-                    Breed(breed)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    state = state
+                ) {
+                    itemsIndexed(items = breeds) { index, breed ->
+                        DisplayBreed(index = index, breed = breed)
+                    }
                 }
             }
         }
+    }
+
+    @Composable
+    fun DisplayBreed(index: Int, breed: Breed) {
+        if (index > 0 && page > 0 && index >= ((page * PAGE_SIZE) - 1) && !loading) {
+            breedListViewModel.nextPage()
+        }
+        Breed(breed)
     }
 
     @ExperimentalCoilApi
@@ -267,7 +297,7 @@ class BreedListFragment : Fragment() {
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                itemsIndexed(items = filteredBreedList) { index, breed ->
+                itemsIndexed(items = filteredBreedList) { _, breed ->
                     SearchBreedItem(breed)
                 }
             }
@@ -315,20 +345,6 @@ class BreedListFragment : Fragment() {
         }
     }
 
-    @Composable
-    fun TextDetailWidget(detailName: String, detailValue: String) {
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Color.Blue)) {
-                    append("$detailName ")
-                }
-                append(detailValue)
-            },
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            style = TextStyle(fontSize = 15.sp)
-        )
-    }
-
 
     @Composable
     fun AppBottomBar(selectedTab: MutableState<Int>) {
@@ -339,7 +355,7 @@ class BreedListFragment : Fragment() {
         ) {
             BottomNavigationItem(
                 icon = {
-                    Icon(Icons.Filled.List, "")
+                    Icon(painter = painterResource(id = R.drawable.icon_dog), "")
                 },
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(alpha = 0.4f),
