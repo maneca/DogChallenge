@@ -1,17 +1,17 @@
 package com.example.dogchallenge.repository
 
 import android.util.Log
-import com.example.dogchallenge.api.DogApi
+import com.example.dogchallenge.api.BreedApi
 import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.db.dao.BreedDao
 import com.example.dogchallenge.db.model.BreedDB
 import com.example.dogchallenge.repository.models.BreedsInfo
 import com.example.dogchallenge.utils.*
 
-class DogRepositoryImp(
-    private val api: DogApi,
+class BreedRepositoryImp(
+    private val api: BreedApi,
     private val dao: BreedDao
-) : DogRepository {
+) : BreedRepository {
 
     override suspend fun getDogBreeds(
         limit: Int,
@@ -40,13 +40,13 @@ class DogRepositoryImp(
                 Log.d("DogChallenge", ApiErrorUtils.parseError(response).message)
                 AppResult.Error(ApiNotResponding())
             }
-        } catch (ex: NoConnectivityException) {
+        } catch (ex: NoInternetConnectionException) {
             val breedsInfo = getBreedsFromDatabase(order)
             if (breedsInfo != null) {
                 AppResult.Success(breedsInfo)
             } else {
                 ex.message?.let { Log.d("DogChallenge", it) }
-                AppResult.Error(NoConnectivityException())
+                AppResult.Error(NoInternetConnectionException())
             }
         } catch (e: Exception) {
             e.message?.let { Log.d("DogChallenge", it) }
@@ -66,10 +66,10 @@ class DogRepositoryImp(
                 Log.d("DogChallenge", ApiErrorUtils.parseError(response).message)
                 AppResult.Error(ApiNotResponding())
             }
-        } catch (ex: NoConnectivityException) {
+        } catch (ex: NoInternetConnectionException) {
             val breeds = searchBreedsFromDatabase(query)
             AppResult.Success(breeds)
-            
+
         } catch (e: Exception) {
             e.message?.let { Log.d("DogChallenge", it) }
             AppResult.Error(UnknownException())

@@ -4,7 +4,7 @@ import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.repository.models.BreedsInfo
 import com.example.dogchallenge.utils.AppResult
 
-interface DogRepository {
+interface BreedRepository {
 
     suspend fun getDogBreeds(limit: Int, page: Int, order: String): AppResult<BreedsInfo>?
 

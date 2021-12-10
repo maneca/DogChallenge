@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dogchallenge.R
 import com.example.dogchallenge.api.models.Breed
-import com.example.dogchallenge.repository.DogRepository
+import com.example.dogchallenge.repository.BreedRepository
 import com.example.dogchallenge.utils.ApiNotResponding
 import com.example.dogchallenge.utils.AppResult
-import com.example.dogchallenge.utils.NoConnectivityException
+import com.example.dogchallenge.utils.NoInternetConnectionException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 const val PAGE_SIZE = 20
 
 class BreedListViewModel(
-    private val repository: DogRepository
+    private val repository: BreedRepository
 ) : ViewModel() {
     var showLoading by mutableStateOf(false)
         private set
@@ -76,7 +76,7 @@ class BreedListViewModel(
                     showError = when (result.exception) {
                         is ApiNotResponding ->
                             R.string.api_not_responding
-                        is NoConnectivityException ->
+                        is NoInternetConnectionException ->
                             R.string.no_network_connectivity
                         else ->
                             R.string.something_went_wrong
@@ -117,7 +117,7 @@ class BreedListViewModel(
                     showError = when (result.exception) {
                         is ApiNotResponding ->
                             R.string.api_not_responding
-                        is NoConnectivityException ->
+                        is NoInternetConnectionException ->
                             R.string.no_network_connectivity
                         else ->
                             R.string.something_went_wrong
