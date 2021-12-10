@@ -300,13 +300,24 @@ class BreedListFragment : Fragment() {
                     )
                 }
             }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-            ) {
-                itemsIndexed(items = filteredBreedList) { _, breed ->
-                    SearchBreedItem(breed)
+            if (filteredBreedList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.nothing_to_show),
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                ) {
+                    itemsIndexed(items = filteredBreedList) { _, breed ->
+                        SearchBreedItem(breed)
+                    }
                 }
             }
         }

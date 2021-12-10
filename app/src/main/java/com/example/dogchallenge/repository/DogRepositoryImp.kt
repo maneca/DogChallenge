@@ -67,8 +67,9 @@ class DogRepositoryImp(
                 AppResult.Error(ApiNotResponding())
             }
         } catch (ex: NoConnectivityException) {
-            ex.message?.let { Log.d("DogChallenge", it) }
-            AppResult.Error(NoConnectivityException())
+            val breeds = searchBreedsFromDatabase(query)
+            AppResult.Success(breeds)
+            
         } catch (e: Exception) {
             e.message?.let { Log.d("DogChallenge", it) }
             AppResult.Error(UnknownException())
@@ -87,5 +88,16 @@ class DogRepositoryImp(
         } else {
             null
         }
+    }
+
+    private fun searchBreedsFromDatabase(query: String): List<Breed> {
+        val breedsFromDB = dao.searchBreeds(query)
+
+        val breeds = mutableListOf<Breed>()
+        breedsFromDB.forEach { breedDB ->
+            val b = Breed(breedDB = breedDB)
+            breeds.add(b)
+        }
+        return breeds
     }
 }

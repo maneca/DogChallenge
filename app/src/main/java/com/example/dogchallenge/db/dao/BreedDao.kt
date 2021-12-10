@@ -15,6 +15,6 @@ interface BreedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addBreeds(breeds: List<BreedDB>)
 
-    @Query("SELECT * FROM breeds WHERE name = :query")
+    @Query("SELECT * FROM breeds WHERE name LIKE :query || '%'")
     fun searchBreeds(query: String): List<BreedDB>
 }
