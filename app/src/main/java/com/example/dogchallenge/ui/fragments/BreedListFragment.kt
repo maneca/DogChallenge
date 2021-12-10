@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -87,7 +88,7 @@ class BreedListFragment : Fragment() {
                 Scaffold(
                     bottomBar = {
                         AppBottomBar(selectedTab)
-                    }) {
+                    }) { innerPadding ->
                     if (loading) {
                         LoadingView()
                     }
@@ -107,22 +108,16 @@ class BreedListFragment : Fragment() {
                         ).show()
                     }
 
-                    if (breedList.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.nothing_to_show),
-                            )
-                        }
-                    } else {
+                    Box(
+                        modifier = Modifier.padding(
+                            bottom = innerPadding.calculateBottomPadding()
+                        )
+                    ) {
                         if (selectedTab.value == 0) {
                             BreedListScreen(breedList, displayList, ascendingOrder, listState)
                         } else {
                             SearchScreen()
                         }
-
                     }
                 }
             }
@@ -183,21 +178,32 @@ class BreedListFragment : Fragment() {
                     }
                 }
             }
-            if (!displayList.value) {
-                LazyVerticalGrid(cells = GridCells.Fixed(2)) {
-                    itemsIndexed(items = breeds) { index, breed ->
-                        DisplayBreed(index = index, breed = breed)
-                    }
+            if (breedList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.nothing_to_show),
+                    )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(),
-                    state = state
-                ) {
-                    itemsIndexed(items = breeds) { index, breed ->
-                        DisplayBreed(index = index, breed = breed)
+                if (!displayList.value) {
+                    LazyVerticalGrid(cells = GridCells.Fixed(2)) {
+                        itemsIndexed(items = breeds) { index, breed ->
+                            DisplayBreed(index = index, breed = breed)
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        state = state
+                    ) {
+                        itemsIndexed(items = breeds) { index, breed ->
+                            DisplayBreed(index = index, breed = breed)
+                        }
                     }
                 }
             }
@@ -241,7 +247,9 @@ class BreedListFragment : Fragment() {
                 Text(
                     text = breed.name,
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

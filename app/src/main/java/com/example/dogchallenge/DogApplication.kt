@@ -1,10 +1,7 @@
 package com.example.dogchallenge
 
 import android.app.Application
-import com.example.dogchallenge.di.apiModule
-import com.example.dogchallenge.di.networkModule
-import com.example.dogchallenge.di.repositoryModule
-import com.example.dogchallenge.di.viewModelModule
+import com.example.dogchallenge.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -20,7 +17,8 @@ class DogApplication : Application() {
                     apiModule,
                     networkModule,
                     repositoryModule,
-                    viewModelModule
+                    viewModelModule,
+                    databaseModule
                 )
             )
         }

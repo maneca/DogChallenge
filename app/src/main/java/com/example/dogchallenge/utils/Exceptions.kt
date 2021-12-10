@@ -1,8 +1,10 @@
 package com.example.dogchallenge.utils
 
+import okio.IOException
 
-class NoConnectivityException : Exception()
 
-class UnknownException : Exception()
+class NoConnectivityException : IOException()
 
-class ApiNotResponding : Exception()
+class UnknownException : IOException()
+
+class ApiNotResponding : IOException()
