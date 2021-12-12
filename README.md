@@ -19,7 +19,9 @@ For each requirement:
 
 
   i. Should be able to order alphabetically.
+  
   ii. Should show only the dog breed image and the name.
+  
   iii. Pressing on one of the list elements, should go to the details view (requirement #3)
   
 2. The screen should :
