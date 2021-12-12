@@ -11,13 +11,14 @@ import com.example.dogchallenge.repository.BreedRepository
 import com.example.dogchallenge.utils.ApiNotResponding
 import com.example.dogchallenge.utils.AppResult
 import com.example.dogchallenge.utils.NoInternetConnectionException
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 const val PAGE_SIZE = 20
 
 class BreedListViewModel(
+    private val ioDispatcher: CoroutineDispatcher,
     private val repository: BreedRepository
 ) : ViewModel() {
     var showLoading by mutableStateOf(false)
@@ -49,16 +50,17 @@ class BreedListViewModel(
 
     fun getBreeds(pageToLoad: Int, resetList: Boolean = false) {
         showLoading = true
-        viewModelScope.launch {
-            val order = if (ascendingOrder) "asc" else "desc"
+        val order = if (ascendingOrder) "asc" else "desc"
+        viewModelScope.launch(context = ioDispatcher) {
             val result =
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     repository.getDogBreeds(
                         PAGE_SIZE,
                         pageToLoad,
                         order
                     )
                 }
+
 
             showLoading = false
             when (result) {
@@ -103,8 +105,8 @@ class BreedListViewModel(
 
     fun searchBreed(breed: String) {
         showLoading = true
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) { repository.searchDogBreeds(breed) }
+        viewModelScope.launch() {
+            val result = withContext(ioDispatcher) { repository.searchDogBreeds(breed) }
 
             showLoading = false
             when (result) {

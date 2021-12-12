@@ -1,7 +1,6 @@
 package com.example.dogchallenge.utils
 
-import okio.IOException
-
+import java.io.IOException
 
 class NoInternetConnectionException : IOException()
 

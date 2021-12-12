@@ -8,10 +8,8 @@ import com.example.dogchallenge.R
 import com.example.dogchallenge.api.BreedApi
 import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.db.dao.BreedDao
-import com.example.dogchallenge.db.model.BreedDB
 import com.example.dogchallenge.repository.models.BreedsInfo
 import com.example.dogchallenge.utils.AppResult
-import com.example.dogchallenge.utils.NoInternetConnectionException
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -23,6 +21,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import retrofit2.Response
+
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -89,21 +88,15 @@ class BreedRepositoryTest {
     }
 
     @Test
-    fun getBreedsFromDatabase() = runBlocking {
-        Assert.assertNotNull(mockDao)
+    fun searchDogBreedsFromNetwork() = runBlocking {
         Assert.assertNotNull(mockApi)
 
-        val breedDB = BreedDB(
-            1,
-            "Affenpinscher",
-            "Stubborn, Curious, Playful, Adventurous, Active, Fun-loving"
-        )
+        coEvery { mockApi.searchBreed("b") } coAnswers { Response.success(listOf(breed)) }
 
-        coEvery { mockApi.getBreeds(10, 0, "asc") } throws (NoInternetConnectionException())
-        coEvery { mockDao.getBreeds(true) } coAnswers { listOf(breedDB) }
+        val result =
+            repository.searchDogBreeds("b") as AppResult.Success<List<Breed>>?
 
-        val result = repository.getDogBreeds(10, 0, "asc") as AppResult.Success<BreedsInfo>
-        Assert.assertEquals(1, result.successData.totalItems)
-        Assert.assertEquals(breed.name, result.successData.breeds[0].name)
+        Assert.assertEquals(1, result!!.successData.size)
+        Assert.assertEquals(breed.name, result.successData[0].name)
     }
 }
