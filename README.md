@@ -10,6 +10,7 @@ THE REQUIREMENTS DESCRIPTION
 We need you to use a Bottom Navigation in order to move from the the list of dog
 breeds(requirement #1) and the search screen(requirement #2).
 For each requirement:
+
 1. You should be able to move from a list view into a grid view and take use of pagination.
   i. Should be able to order alphabetically.
   ii. Should show only the dog breed image and the name.
