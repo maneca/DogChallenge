@@ -1,10 +1,12 @@
 # DogChallenge
 
 THE REQUIREMENTS
+
 Your Application should have the following functionalities:
 1. Show a screen with a list of dog breeds images.
 2. Show a screen with a list of dog breeds when you search by breed name.
 3. Show a screen with the detailed view of a breed.
+
 
 THE REQUIREMENTS DESCRIPTION
 We need you to use a Bottom Navigation in order to move from the the list of dog
