@@ -11,15 +11,20 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import coil.annotation.ExperimentalCoilApi
 import com.example.dogchallenge.R
 import com.example.dogchallenge.ui.models.BreedUI
+import com.example.dogchallenge.ui.widgets.LoadPicture
+import com.example.dogchallenge.ui.widgets.TextBox
 import com.example.dogchallenge.ui.widgets.TextDetailWidget
 
+@ExperimentalCoilApi
 class BreedDetailsFragment: Fragment() {
 
     companion object {
@@ -72,13 +77,17 @@ class BreedDetailsFragment: Fragment() {
         }
     }
 
+    @ExperimentalCoilApi
     @Composable
     fun BreedDetails(breedDetail: BreedUI) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
+                .padding(4.dp)
         ) {
+            LoadPicture(url = breedDetail.url)
+            Spacer(modifier = Modifier.size(4.dp))
             TextDetailWidget(
                 detailName = stringResource(R.string.breed_name),
                 detailValue = breedDetail.name
@@ -95,9 +104,10 @@ class BreedDetailsFragment: Fragment() {
             )
             Spacer(modifier = Modifier.size(4.dp))
             TextDetailWidget(
-                detailName = stringResource(R.string.breed_temperament),
-                detailValue = breedDetail.temperament
+                detailName = stringResource(R.string.breed_temperament) + "\n",
+                detailValue = ""
             )
+            TextBox(breedDetail.temperament.split(","), Color(0xFF9CCC65), 10.dp)
         }
     }
 

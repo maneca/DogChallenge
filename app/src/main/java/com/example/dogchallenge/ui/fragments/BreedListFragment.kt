@@ -1,13 +1,11 @@
 package com.example.dogchallenge.ui.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,12 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,14 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.LocalImageLoader
-import coil.compose.rememberImagePainter
 import com.example.dogchallenge.R
 import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.ui.models.BreedUI
 import com.example.dogchallenge.ui.widgets.ErrorDialog
+import com.example.dogchallenge.ui.widgets.LoadPicture
 import com.example.dogchallenge.ui.widgets.LoadingView
 import com.example.dogchallenge.ui.widgets.TextDetailWidget
 import com.example.dogchallenge.viewmodels.BreedListViewModel
@@ -399,27 +391,5 @@ class BreedListFragment : Fragment() {
         }
     }
 
-    @ExperimentalCoilApi
-    @SuppressLint("UnrememberedMutableState")
-    @Composable
-    fun LoadPicture(url: String?) {
-        val imageLoader = ImageLoader.Builder(LocalContext.current)
-            .build()
 
-        CompositionLocalProvider(LocalImageLoader provides imageLoader) {
-            val painter =
-                if (url == null) painterResource(R.drawable.placeholder) else rememberImagePainter(
-                    url
-                )
-            Image(
-                painter = painter,
-                contentDescription = "",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RectangleShape),
-                contentScale = ContentScale.Fit
-            )
-        }
-    }
 }
