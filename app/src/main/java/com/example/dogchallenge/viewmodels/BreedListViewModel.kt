@@ -11,6 +11,7 @@ import com.example.dogchallenge.repository.BreedRepository
 import com.example.dogchallenge.utils.ApiNotResponding
 import com.example.dogchallenge.utils.AppResult
 import com.example.dogchallenge.utils.NoInternetConnectionException
+import com.example.dogchallenge.utils.UiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,19 +22,13 @@ class BreedListViewModel(
     private val ioDispatcher: CoroutineDispatcher,
     private val repository: BreedRepository
 ) : ViewModel() {
-    var showLoading by mutableStateOf(false)
+    var state by mutableStateOf<UiState?>(null)
         private set
 
     var breedList by mutableStateOf<List<Breed>>(ArrayList())
         private set
 
     var filteredBreedList by mutableStateOf<List<Breed>>(ArrayList())
-        private set
-
-    var showError by mutableStateOf<Int?>(null)
-        private set
-
-    var showWarning by mutableStateOf<Int?>(null)
         private set
 
     var ascendingOrder by mutableStateOf(true)
@@ -49,9 +44,9 @@ class BreedListViewModel(
     }
 
     fun getBreeds(pageToLoad: Int, resetList: Boolean = false) {
-        showLoading = true
+        state = UiState.Loading(true)
         val order = if (ascendingOrder) "asc" else "desc"
-        viewModelScope.launch(context = ioDispatcher) {
+        viewModelScope.launch {
             val result =
                 withContext(ioDispatcher) {
                     repository.getDogBreeds(
@@ -61,21 +56,20 @@ class BreedListViewModel(
                     )
                 }
 
-
-            showLoading = false
+            state = UiState.Loading(false)
             when (result) {
                 is AppResult.Success -> {
-                    totalItems = result.successData.totalItems
+                    totalItems = result.successData.totalItems ?: -1
                     if (resetList) {
                         breedList = result.successData.breeds
                         page = 1
                     } else
                         appendBreeds(result.successData.breeds)
 
-                    showError = null
+                    state = UiState.Error(null)
                 }
                 is AppResult.Error -> {
-                    showError = when (result.exception) {
+                    val error = when (result.exception) {
                         is ApiNotResponding ->
                             R.string.api_not_responding
                         is NoInternetConnectionException ->
@@ -83,8 +77,9 @@ class BreedListViewModel(
                         else ->
                             R.string.something_went_wrong
                     }
+                    state = UiState.Error(error)
                 }
-                else -> showError = R.string.something_went_wrong
+                else -> state = UiState.Error(R.string.something_went_wrong)
             }
         }
     }
@@ -98,25 +93,24 @@ class BreedListViewModel(
             getBreeds(page)
             page += 1
         } else {
-            showWarning = R.string.no_more_data
+            state = UiState.Warning(R.string.no_more_data)
         }
-
     }
 
     fun searchBreed(breed: String) {
-        showLoading = true
-        viewModelScope.launch() {
+        state = UiState.Loading(true)
+        viewModelScope.launch {
             val result = withContext(ioDispatcher) { repository.searchDogBreeds(breed) }
 
-            showLoading = false
+            state = UiState.Loading(false)
             when (result) {
                 is AppResult.Success -> {
                     filteredBreedList = result.successData
 
-                    showError = null
+                    state = UiState.Error(null)
                 }
                 is AppResult.Error -> {
-                    showError = when (result.exception) {
+                    val error = when (result.exception) {
                         is ApiNotResponding ->
                             R.string.api_not_responding
                         is NoInternetConnectionException ->
@@ -124,8 +118,9 @@ class BreedListViewModel(
                         else ->
                             R.string.something_went_wrong
                     }
+                    state = UiState.Error(error)
                 }
-                else -> showError = R.string.something_went_wrong
+                else -> UiState.Error(R.string.something_went_wrong)
             }
         }
     }

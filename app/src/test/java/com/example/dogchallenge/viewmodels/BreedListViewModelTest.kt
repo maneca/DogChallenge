@@ -9,7 +9,8 @@ import com.example.dogchallenge.utils.MainCoroutineRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
-import junit.framework.Assert.*
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -94,7 +95,7 @@ class BreedListViewModelTest {
         } coAnswers { AppResult.Error(Exception("")) }
         viewModel = BreedListViewModel(testDispatcher, mockRepo)
 
-        assertNotNull(viewModel.showError)
+        assertNotNull(viewModel.state)
         assertEquals(0, viewModel.breedList.size)
     }
 
@@ -114,8 +115,7 @@ class BreedListViewModelTest {
         viewModel.nextPage()
         viewModel.nextPage()
 
-        assertNotNull(viewModel.showWarning)
-        assertNull(viewModel.showError)
+        assertNotNull (viewModel.state)
     }
 
     @Test
@@ -150,7 +150,7 @@ class BreedListViewModelTest {
 
         viewModel.searchBreed("b")
 
-        assertNotNull(viewModel.showError)
+        assertNotNull(viewModel.state)
         assertEquals(0, viewModel.filteredBreedList.size)
     }
 }

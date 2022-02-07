@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+
 android {
     compileSdk 31
 
@@ -19,12 +20,21 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        def Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        resValue "string", "api_key", properties.getProperty("api.key", "")
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
         }
     }
     compileOptions {
@@ -58,7 +68,6 @@ android {
         }
     }
 }
-
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'

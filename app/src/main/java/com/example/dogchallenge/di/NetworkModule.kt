@@ -29,7 +29,7 @@ val networkModule = module {
             okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
         }
         okHttpClientBuilder.addInterceptor(NetworkInterceptor(context))
-        okHttpClientBuilder.addInterceptor(HeaderInterceptor())
+        okHttpClientBuilder.addInterceptor(HeaderInterceptor(context))
         okHttpClientBuilder.build()
         return okHttpClientBuilder.build()
     }

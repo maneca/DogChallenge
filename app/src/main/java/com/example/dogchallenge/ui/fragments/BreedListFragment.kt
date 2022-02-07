@@ -43,6 +43,7 @@ import com.example.dogchallenge.ui.widgets.ErrorDialog
 import com.example.dogchallenge.ui.widgets.LoadPicture
 import com.example.dogchallenge.ui.widgets.LoadingView
 import com.example.dogchallenge.ui.widgets.TextDetailWidget
+import com.example.dogchallenge.utils.UiState
 import com.example.dogchallenge.viewmodels.BreedListViewModel
 import com.example.dogchallenge.viewmodels.PAGE_SIZE
 import kotlinx.coroutines.launch
@@ -58,6 +59,7 @@ class BreedListFragment : Fragment() {
     private var ascendingOrder: Boolean = true
     private var page: Int = 0
     private var loading: Boolean = false
+    private var uiState : UiState? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,32 +74,43 @@ class BreedListFragment : Fragment() {
                 ascendingOrder = breedListViewModel.ascendingOrder
                 breedList = breedListViewModel.breedList
                 filteredBreedList = breedListViewModel.filteredBreedList
-                loading = breedListViewModel.showLoading
-                val error = breedListViewModel.showError
-                val warning = breedListViewModel.showWarning
+                uiState = breedListViewModel.state
                 page = breedListViewModel.page
 
                 Scaffold(
                     bottomBar = {
                         AppBottomBar(selectedTab)
                     }) { innerPadding ->
-                    if (loading) {
-                        LoadingView()
-                    }
 
-                    if (error != null) {
-                        ErrorDialog(
-                            message = stringResource(error),
-                            title = getString(R.string.error_title),
-                            dismissText = getString(R.string.dismiss_button)
-                        )
-                    }
-                    if (warning != null) {
-                        Toast.makeText(
-                            context,
-                            warning,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    when(uiState){
+                        is UiState.Loading ->{
+                            if ((uiState as UiState.Loading).show){
+                                LoadingView()
+                            }
+
+                        }
+
+                        is UiState.Error -> {
+                            val error = (uiState as UiState.Error).message
+                            if (error != null) {
+                                ErrorDialog(
+                                    message = stringResource(error),
+                                    title = getString(R.string.error_title),
+                                    dismissText = getString(R.string.dismiss_button)
+                                )
+                            }
+                        }
+
+                        is UiState.Warning -> {
+                            val warning = (uiState as UiState.Warning).message
+                            if (warning != null) {
+                                Toast.makeText(
+                                    context,
+                                    warning,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
 
                     Box(
@@ -345,7 +358,7 @@ class BreedListFragment : Fragment() {
                 Spacer(modifier = Modifier.size(4.dp))
                 TextDetailWidget(
                     detailName = stringResource(R.string.breed_group),
-                    detailValue = breed.breed_group
+                    detailValue = breed.breed_group ?: "N/A"
                 )
                 Spacer(modifier = Modifier.size(4.dp))
                 TextDetailWidget(

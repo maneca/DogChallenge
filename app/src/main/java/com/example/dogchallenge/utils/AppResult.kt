@@ -5,6 +5,4 @@ sealed class AppResult<out T> {
 
     class Error(val exception: Exception, val message: String? = exception.localizedMessage) :
         AppResult<Nothing>()
-
-    class Warning(val message: String) : AppResult<Nothing>()
 }

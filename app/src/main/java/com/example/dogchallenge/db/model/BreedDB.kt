@@ -8,7 +8,7 @@ import com.example.dogchallenge.api.models.Breed
 class BreedDB(
     @PrimaryKey val id: Int,
     val name: String,
-    val temperament: String,
+    val temperament: String? = "",
     val origin: String? = "",
     val category: String = ""
 ) {

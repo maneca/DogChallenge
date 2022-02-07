@@ -1,10 +1,5 @@
 package com.example.dogchallenge.repository
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
-import com.example.dogchallenge.R
 import com.example.dogchallenge.api.BreedApi
 import com.example.dogchallenge.api.models.Breed
 import com.example.dogchallenge.db.dao.BreedDao
@@ -20,11 +15,11 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import retrofit2.Response
 
 
-@RunWith(AndroidJUnit4::class)
-@SmallTest
+@RunWith(JUnit4::class)
 class BreedRepositoryTest {
 
     @MockK
@@ -32,8 +27,6 @@ class BreedRepositoryTest {
 
     @MockK(relaxUnitFun = true)
     private lateinit var mockDao: BreedDao
-
-    private lateinit var context: Context
 
     private lateinit var repository: BreedRepository
 
@@ -54,7 +47,6 @@ class BreedRepositoryTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        context = ApplicationProvider.getApplicationContext()
         repository = BreedRepositoryImp(mockApi, mockDao)
     }
 
@@ -71,7 +63,7 @@ class BreedRepositoryTest {
                 .addHeader("pagination-count", "1")
                 .protocol(Protocol.HTTP_2)
                 .request(
-                    Request.Builder().url(context.resources.getString(R.string.BASE_URL)).build()
+                    Request.Builder().url("https://api.thedogapi.com/v1/").build()
                 )
                 .receivedResponseAtMillis(1619053449513)
                 .sentRequestAtMillis(1619053443814)

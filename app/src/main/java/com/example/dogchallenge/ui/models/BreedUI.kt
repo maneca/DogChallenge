@@ -11,7 +11,7 @@ data class BreedUI(
     val url: String?,
     val category: String,
     val origin: String?,
-    val temperament: String
+    val temperament: String?
 ) : Parcelable {
     constructor(breed: Breed) : this(
         breed.name,

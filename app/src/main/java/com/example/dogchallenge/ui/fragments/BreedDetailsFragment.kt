@@ -112,7 +112,7 @@ class BreedDetailsFragment: Fragment() {
                 detailName = stringResource(R.string.breed_temperament) + "\n",
                 detailValue = ""
             )
-            TextBox(breedDetail.temperament.split(","), Color(0xFF9CCC65), 10.dp)
+            breedDetail.temperament?.let { TextBox(it.split(","), Color(0xFF9CCC65), 10.dp) }
         }
     }
 

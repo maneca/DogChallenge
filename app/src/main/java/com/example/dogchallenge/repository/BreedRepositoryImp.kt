@@ -30,8 +30,9 @@ class BreedRepositoryImp(
                     }
                     dao.addBreeds(breedsDB.toList())
 
+
                     val breedsInfo = BreedsInfo(
-                        response.headers()["pagination-count"]!!.toInt(),
+                        response.headers()["pagination-count"]?.toInt(),
                         it
                     )
                     AppResult.Success(breedsInfo)
